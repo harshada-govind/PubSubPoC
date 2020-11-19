@@ -2,14 +2,18 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using NServiceBus;
 using NServiceBus.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Subscriber
+namespace MessageSubscriber
 {
-    public class SubscriberService
+    public class MessageSubscriberService
     {
-        private static readonly ILog _logger = LogManager.GetLogger<SubscriberService>();
+        private static readonly ILog _logger = LogManager.GetLogger<MessageSubscriberService>();
         private const string ENDPOINT = "Subscriber";
 
         public static async Task Main(string[] args)
@@ -37,7 +41,7 @@ namespace Subscriber
                    config.AddJsonFile("appsettings.json").Build();
                })
                .UseNServiceBus(ctx =>
-                   new NServiceBusConfiguration(ENDPOINT, ctx.Configuration).Build()
+                   new Configuration.NServiceBusConfiguration(ENDPOINT, ctx.Configuration).Build()
                )
                .ConfigureServices((hostContext, services) =>
                {
