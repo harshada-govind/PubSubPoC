@@ -43,7 +43,7 @@ namespace MessagePublisher.Configuration
             subscriptions.SubscriptionTableName(
                 tableName: "SubscriptionRouting",
                 schemaName: "dbo",
-                catalogName: "MessagePublisher");
+                catalogName: "HTest");
             var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
             persistence.ConnectionBuilder(() => new SqlConnection(messagePublisherConnection));
             var dialect = persistence.SqlDialect<SqlDialect.MsSqlServer>();
