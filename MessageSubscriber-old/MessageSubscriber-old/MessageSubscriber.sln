@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.30711.63
+VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageSubscriber", "Subscriber\MessageSubscriber.csproj", "{2051CBB1-A2C2-4E67-ADCB-07D5CFB6FFB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageSubscriber", "MessageSubscriber.csproj", "{2051CBB1-A2C2-4E67-ADCB-07D5CFB6FFB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {E5B2893F-C040-43A8-9312-4B607A2E27C2}
+		SolutionGuid = {7BB68DBE-29BD-4D39-A70F-11C231AFDB14}
 	EndGlobalSection
 EndGlobal

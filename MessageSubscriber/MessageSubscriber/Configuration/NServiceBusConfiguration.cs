@@ -1,9 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using NServiceBus;
 using Newtonsoft.Json;
-using Microsoft.Extensions.Configuration;
 
 namespace MessageSubscriber.Configuration
 {
@@ -20,7 +19,8 @@ namespace MessageSubscriber.Configuration
         }
         public EndpointConfiguration Build()
         {
-            string nsbLicense = $"{ AppDomain.CurrentDomain.BaseDirectory }/license/license.xml";
+            //string nsbLicense = $"{ AppDomain.CurrentDomain.BaseDirectory }/license/license.xml";
+            string nsbLicense = $"C://NServiceBus//license.xml";
             string messageSubscriberConnection = _configuration.GetConnectionString("MessageSubscriberDBContext");
 
             var endpointConfiguration = new EndpointConfiguration(EndpointName);
@@ -44,7 +44,7 @@ namespace MessageSubscriber.Configuration
             subscriptions.SubscriptionTableName(
                 tableName: "SubscriptionRouting",
                 schemaName: "dbo",
-                catalogName: "MessageSubscriber");
+                catalogName: "Message.Subscriber");
             var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
             persistence.ConnectionBuilder(() => new SqlConnection(messageSubscriberConnection));
             var dialect = persistence.SqlDialect<SqlDialect.MsSqlServer>();

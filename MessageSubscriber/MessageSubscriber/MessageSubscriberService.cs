@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,13 +8,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Configuration;
 
 namespace MessageSubscriber
 {
     public class MessageSubscriberService
     {
         private static readonly ILog _logger = LogManager.GetLogger<MessageSubscriberService>();
-        private const string ENDPOINT = "Subscriber";
+        private const string ENDPOINT = "Message.Subscriber";
 
         public static async Task Main(string[] args)
         {
@@ -34,7 +35,7 @@ namespace MessageSubscriber
             }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) => 
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                .ConfigureAppConfiguration((hostingContext, config) =>
                {
@@ -46,6 +47,6 @@ namespace MessageSubscriber
                .ConfigureServices((hostContext, services) =>
                {
                    services.AddLogging(loggingBuilder => loggingBuilder.AddConsole());
-       });
+               });
     }
 }

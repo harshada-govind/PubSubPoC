@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using NServiceBus;
+﻿
 using System;
 using System.Data.SqlClient;
+using NServiceBus;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
 
-namespace MessagePublisher.Configuration
+namespace MessageSubscriber.Configuration
 {
     public class NServiceBusConfiguration
     {
@@ -19,9 +20,8 @@ namespace MessagePublisher.Configuration
         }
         public EndpointConfiguration Build()
         {
-            //string nsbLicense = $"{ AppDomain.CurrentDomain.BaseDirectory }/license/license.xml";
-            string nsbLicense = $"C://NServiceBus//license.xml";
-            string messagePublisherConnection = _configuration.GetConnectionString("NServiceBus_Transport");
+            string nsbLicense = $"{ AppDomain.CurrentDomain.BaseDirectory }/license/license.xml";
+            string messageSubscriberConnection = _configuration.GetConnectionString("MessageSubscriberDBContext");
 
             var endpointConfiguration = new EndpointConfiguration(EndpointName);
             endpointConfiguration.LicensePath(nsbLicense);
@@ -44,9 +44,9 @@ namespace MessagePublisher.Configuration
             subscriptions.SubscriptionTableName(
                 tableName: "SubscriptionRouting",
                 schemaName: "dbo",
-                catalogName: "Message.Publisher");
+                catalogName: "MessageSubscriber");
             var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
-            persistence.ConnectionBuilder(() => new SqlConnection(messagePublisherConnection));
+            persistence.ConnectionBuilder(() => new SqlConnection(messageSubscriberConnection));
             var dialect = persistence.SqlDialect<SqlDialect.MsSqlServer>();
 
             return endpointConfiguration;
