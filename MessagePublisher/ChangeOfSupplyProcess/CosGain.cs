@@ -1,33 +1,62 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using NServiceBus;
+using NServiceBus.Logging;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Publisher.Messages.Events;
 
 namespace MessagePublisher.ChangeOfSupplyProcess
 {
-    public class CosGain
+    public class CosGain : BackgroundService
     {
-        public async Task  PublishEvent(IEndpointInstance endpointInstance)
+        private readonly IServiceProvider provider;
+        protected readonly IConfiguration configuration;
+        static ILog log = LogManager.GetLogger<CosGain>();
+        internal static IMessageSession session;
+
+        public CosGain(IServiceProvider serviceProvider, IConfiguration config)
         {
-            var myTimer = new System.Timers.Timer();
-            myTimer.Elapsed += new ElapsedEventHandler(NextCosGainPublisher);
-            myTimer.Interval = 5000;
-            myTimer.Enabled = true;
-
-            var registerSmartMeter = new SmartMeterRegistered()
-            {
-                RegistrationId = "1234",
-                Mpxn = "1234567890123",
-                SupplyStartDate = DateTime.Now.AddDays(5)
-
-            };
-            await endpointInstance.Publish(registerSmartMeter).ConfigureAwait(false);
+            this.provider = serviceProvider;
+            this.configuration = config;
         }
 
-        private void NextCosGainPublisher(object source, ElapsedEventArgs e) 
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine("Time Elapsed: " + e.SignalTime.ToString());
+            try
+            {
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    session = provider.GetService<IMessageSession>();
+                    Console.WriteLine("Press 1 to publish the event, any other key to exit");
+                    var key = Console.ReadKey();
+                    Console.WriteLine();
+
+                    var regId = Guid.NewGuid();
+                    if (key.Key != ConsoleKey.D1)
+                    {
+
+                        var registerSmartMeter = new SmartMeterRegistered()
+                        {
+                            RegistrationId = regId.ToString(),
+                            Mpxn = "1234567890123",
+                            SupplyStartDate = DateTime.Now.AddDays(5)
+
+                        };
+                        await session.Publish(registerSmartMeter).ConfigureAwait(false);
+                        Console.WriteLine($"Published SmartMeterRegistered Event with Registration Id {registerSmartMeter.RegistrationId}.");
+                    }
+                }
+                await Task.Delay(100, stoppingToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException e)
+            {
+                log.Warn($"{e.InnerException.ToString() ?? e.StackTrace}");
+            }
         }
     }
 }

@@ -46,6 +46,7 @@ namespace MessagePublisher
                .ConfigureServices((hostContext, services) =>
                {
                    services.AddLogging(loggingBuilder => loggingBuilder.AddConsole());
+                   services.AddHostedService<ChangeOfSupplyProcess.CosGain>();
                });
     }
 }

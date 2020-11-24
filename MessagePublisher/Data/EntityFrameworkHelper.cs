@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using NServiceBus;
 using NServiceBus.Persistence;
 
 

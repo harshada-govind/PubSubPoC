@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NServiceBus;
-using System;
+using Publisher.Messages.Events;
 using System.Data.SqlClient;
 
 namespace MessagePublisher.Configuration
@@ -28,6 +28,7 @@ namespace MessagePublisher.Configuration
             endpointConfiguration.EnableInstallers();
             endpointConfiguration.SendFailedMessagesTo("error");
             endpointConfiguration.AuditProcessedMessagesTo("audit");
+
             endpointConfiguration.AddDeserializer<XmlSerializer>();
             var settings = new JsonSerializerSettings
             {
@@ -35,21 +36,28 @@ namespace MessagePublisher.Configuration
             };
             var serialization = endpointConfiguration.UseSerialization<NewtonsoftSerializer>();
             serialization.Settings(settings);
-            string NServiceBusConnection = _configuration.GetConnectionString("NServiceBus_Transport");
+
+            string nServiceBusConnection = _configuration.GetConnectionString("NServiceBus_Transport");
             var transport = endpointConfiguration.UseTransport<SqlServerTransport>();
             transport.Transactions(TransportTransactionMode.TransactionScope);
-            transport.ConnectionString(NServiceBusConnection);
+            transport.ConnectionString(nServiceBusConnection);
             transport.SubscriptionSettings().DisableSubscriptionCache();
+
             var subscriptions = transport.SubscriptionSettings();
             subscriptions.SubscriptionTableName(
                 tableName: "SubscriptionRouting",
                 schemaName: "dbo",
-                catalogName: "Message.Publisher");
+                catalogName: "Message.NServiceBus");
+
             var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
             persistence.ConnectionBuilder(() => new SqlConnection(messagePublisherConnection));
+
             var dialect = persistence.SqlDialect<SqlDialect.MsSqlServer>();
+
+            transport.Routing().RouteToEndpoint(typeof(SmartMeterRegistered), "MessagePublisher");
 
             return endpointConfiguration;
         }
+
     }
 }
